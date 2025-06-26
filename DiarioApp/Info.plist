@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Facebook y Google Login -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fb1716566305920207</string>
+				<string>com.googleusercontent.apps.508446416169-hq6vgs16qb541402cvlas8tsf89qt316</string>
+			</array>
+		</dict>
+	</array>
+
+	<key>FacebookAppID</key>
+	<string>1716566305920207</string>
+
+	<key>FacebookClientToken</key>
+	<string>ea1f851d7fcfa4fd87c19ebb299658a3</string>
+
+	<key>FacebookDisplayName</key>
+	<string>DiarioApp</string>
+
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>fbapi</string>
+		<string>fb-messenger-share-api</string>
+		<string>fbauth2</string>
+		<string>fbshareextension</string>
+		<string>google</string>
+	</array>
+
+	<!-- Permisos para usar cámara y galería -->
+	<key>NSCameraUsageDescription</key>
+	<string>Necesitamos acceso a tu cámara para cambiar tu foto de perfil.</string>
+
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Necesitamos acceso a tu galería para seleccionar tu foto de perfil.</string>
+</dict>
+</plist>

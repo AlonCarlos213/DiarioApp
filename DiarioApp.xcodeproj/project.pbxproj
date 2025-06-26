@@ -1,0 +1,507 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		590ACF852E04B50A005B49BE /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 590ACF842E04B50A005B49BE /* FirebaseFirestore */; };
+		591B58822DFCC99100E03D07 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 591B58812DFCC99100E03D07 /* GoogleSignIn */; };
+		591B58842DFCC99100E03D07 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 591B58832DFCC99100E03D07 /* GoogleSignInSwift */; };
+		591B58872DFCCA9F00E03D07 /* FacebookCore in Frameworks */ = {isa = PBXBuildFile; productRef = 591B58862DFCCA9F00E03D07 /* FacebookCore */; };
+		591B58892DFCCA9F00E03D07 /* FacebookLogin in Frameworks */ = {isa = PBXBuildFile; productRef = 591B58882DFCCA9F00E03D07 /* FacebookLogin */; };
+		599681C42DF9F19700ADAF3F /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 599681C32DF9F19700ADAF3F /* FirebaseAuth */; };
+		599681C62DF9F19700ADAF3F /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 599681C52DF9F19700ADAF3F /* FirebaseCore */; };
+		599681C82DF9F19700ADAF3F /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 599681C72DF9F19700ADAF3F /* FirebaseDatabase */; };
+		599681CA2DF9F19700ADAF3F /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 599681C92DF9F19700ADAF3F /* FirebaseStorage */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		599681B42DF7F6DF00ADAF3F /* DiarioApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DiarioApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		590ACF952E0552D8005B49BE /* Exceptions for "Models" folder in "DiarioApp" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Diario.swift,
+			);
+			target = 599681B32DF7F6DF00ADAF3F /* DiarioApp */;
+		};
+		590ACF962E0552E8005B49BE /* Exceptions for "Utils" folder in "DiarioApp" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Utils.swift,
+			);
+			target = 599681B32DF7F6DF00ADAF3F /* DiarioApp */;
+		};
+		590ACF992E055ABE005B49BE /* Exceptions for "DiarioApp" folder in "DiarioApp" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 599681B32DF7F6DF00ADAF3F /* DiarioApp */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		590ACF8E2E0551DE005B49BE /* Views */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Views;
+			sourceTree = "<group>";
+		};
+		590ACF902E055204005B49BE /* ViewModels */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		590ACF912E05522F005B49BE /* Models */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				590ACF952E0552D8005B49BE /* Exceptions for "Models" folder in "DiarioApp" target */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		590ACF922E055254005B49BE /* Utils */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				590ACF962E0552E8005B49BE /* Exceptions for "Utils" folder in "DiarioApp" target */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		590ACF932E05527E005B49BE /* Resources */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		599681B62DF7F6DF00ADAF3F /* DiarioApp */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				590ACF992E055ABE005B49BE /* Exceptions for "DiarioApp" folder in "DiarioApp" target */,
+			);
+			path = DiarioApp;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		599681B12DF7F6DF00ADAF3F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				591B58892DFCCA9F00E03D07 /* FacebookLogin in Frameworks */,
+				591B58822DFCC99100E03D07 /* GoogleSignIn in Frameworks */,
+				599681C82DF9F19700ADAF3F /* FirebaseDatabase in Frameworks */,
+				591B58872DFCCA9F00E03D07 /* FacebookCore in Frameworks */,
+				599681CA2DF9F19700ADAF3F /* FirebaseStorage in Frameworks */,
+				590ACF852E04B50A005B49BE /* FirebaseFirestore in Frameworks */,
+				591B58842DFCC99100E03D07 /* GoogleSignInSwift in Frameworks */,
+				599681C62DF9F19700ADAF3F /* FirebaseCore in Frameworks */,
+				599681C42DF9F19700ADAF3F /* FirebaseAuth in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		599681AB2DF7F6DF00ADAF3F = {
+			isa = PBXGroup;
+			children = (
+				590ACF932E05527E005B49BE /* Resources */,
+				590ACF8E2E0551DE005B49BE /* Views */,
+				599681B62DF7F6DF00ADAF3F /* DiarioApp */,
+				599681B52DF7F6DF00ADAF3F /* Products */,
+				590ACF902E055204005B49BE /* ViewModels */,
+				590ACF912E05522F005B49BE /* Models */,
+				590ACF922E055254005B49BE /* Utils */,
+			);
+			sourceTree = "<group>";
+		};
+		599681B52DF7F6DF00ADAF3F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				599681B42DF7F6DF00ADAF3F /* DiarioApp.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		599681B32DF7F6DF00ADAF3F /* DiarioApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 599681BF2DF7F6E100ADAF3F /* Build configuration list for PBXNativeTarget "DiarioApp" */;
+			buildPhases = (
+				599681B02DF7F6DF00ADAF3F /* Sources */,
+				599681B12DF7F6DF00ADAF3F /* Frameworks */,
+				599681B22DF7F6DF00ADAF3F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				590ACF8E2E0551DE005B49BE /* Views */,
+				590ACF902E055204005B49BE /* ViewModels */,
+				590ACF932E05527E005B49BE /* Resources */,
+				599681B62DF7F6DF00ADAF3F /* DiarioApp */,
+			);
+			name = DiarioApp;
+			packageProductDependencies = (
+				599681C32DF9F19700ADAF3F /* FirebaseAuth */,
+				599681C52DF9F19700ADAF3F /* FirebaseCore */,
+				599681C72DF9F19700ADAF3F /* FirebaseDatabase */,
+				599681C92DF9F19700ADAF3F /* FirebaseStorage */,
+				591B58812DFCC99100E03D07 /* GoogleSignIn */,
+				591B58832DFCC99100E03D07 /* GoogleSignInSwift */,
+				591B58862DFCCA9F00E03D07 /* FacebookCore */,
+				591B58882DFCCA9F00E03D07 /* FacebookLogin */,
+				590ACF842E04B50A005B49BE /* FirebaseFirestore */,
+			);
+			productName = DiarioApp;
+			productReference = 599681B42DF7F6DF00ADAF3F /* DiarioApp.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		599681AC2DF7F6DF00ADAF3F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1630;
+				LastUpgradeCheck = 1630;
+				TargetAttributes = {
+					599681B32DF7F6DF00ADAF3F = {
+						CreatedOnToolsVersion = 16.3;
+					};
+				};
+			};
+			buildConfigurationList = 599681AF2DF7F6DF00ADAF3F /* Build configuration list for PBXProject "DiarioApp" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 599681AB2DF7F6DF00ADAF3F;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				599681C22DF9F19700ADAF3F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				591B58802DFCC99000E03D07 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				591B58852DFCCA9F00E03D07 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 599681B52DF7F6DF00ADAF3F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				599681B32DF7F6DF00ADAF3F /* DiarioApp */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		599681B22DF7F6DF00ADAF3F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		599681B02DF7F6DF00ADAF3F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		599681BD2DF7F6E100ADAF3F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		599681BE2DF7F6E100ADAF3F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		599681C02DF7F6E100ADAF3F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = QH6T834AM9;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DiarioApp/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "carlos.mamani-tecsup.edu.pe.DiarioAppt-";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		599681C12DF7F6E100ADAF3F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = QH6T834AM9;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DiarioApp/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "carlos.mamani-tecsup.edu.pe.DiarioAppt-";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		599681AF2DF7F6DF00ADAF3F /* Build configuration list for PBXProject "DiarioApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				599681BD2DF7F6E100ADAF3F /* Debug */,
+				599681BE2DF7F6E100ADAF3F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		599681BF2DF7F6E100ADAF3F /* Build configuration list for PBXNativeTarget "DiarioApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				599681C02DF7F6E100ADAF3F /* Debug */,
+				599681C12DF7F6E100ADAF3F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		591B58802DFCC99000E03D07 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.0;
+			};
+		};
+		591B58852DFCCA9F00E03D07 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/facebook/facebook-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 14.1.0;
+			};
+		};
+		599681C22DF9F19700ADAF3F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.14.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		590ACF842E04B50A005B49BE /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 599681C22DF9F19700ADAF3F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		591B58812DFCC99100E03D07 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 591B58802DFCC99000E03D07 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		591B58832DFCC99100E03D07 /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 591B58802DFCC99000E03D07 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
+		};
+		591B58862DFCCA9F00E03D07 /* FacebookCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 591B58852DFCCA9F00E03D07 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
+			productName = FacebookCore;
+		};
+		591B58882DFCCA9F00E03D07 /* FacebookLogin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 591B58852DFCCA9F00E03D07 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
+			productName = FacebookLogin;
+		};
+		599681C32DF9F19700ADAF3F /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 599681C22DF9F19700ADAF3F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		599681C52DF9F19700ADAF3F /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 599681C22DF9F19700ADAF3F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		599681C72DF9F19700ADAF3F /* FirebaseDatabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 599681C22DF9F19700ADAF3F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseDatabase;
+		};
+		599681C92DF9F19700ADAF3F /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 599681C22DF9F19700ADAF3F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 599681AC2DF7F6DF00ADAF3F /* Project object */;
+}
