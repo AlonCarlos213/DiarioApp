@@ -12,28 +12,14 @@ import Firebase
 struct DiarioAppApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     @StateObject var authVM = AuthViewModel()
-    @State private var showSplash = true
 
     var body: some Scene {
         WindowGroup {
             NavigationView {
-                if showSplash {
-                    SplashView()
-                        .onAppear {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-                                showSplash = false
-                            }
-                        }
-                } else {
-                    if let user = authVM.user {
-                        HomeView()
-                    } else {
-                        InicioView()
-                    }
-                }
+                SplashView()
             }
             .environmentObject(authVM)
+            .environmentObject(authVM.appSettings)
         }
     }
 }
-

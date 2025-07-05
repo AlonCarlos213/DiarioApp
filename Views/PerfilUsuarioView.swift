@@ -5,6 +5,7 @@ import FirebaseFirestore
 
 struct PerfilUsuarioView: View {
     @EnvironmentObject var authVM: AuthViewModel
+    @EnvironmentObject var appSettings: AppSettings
     @Environment(\.dismiss) var dismiss
 
     @State private var descripcion = ""
@@ -14,7 +15,6 @@ struct PerfilUsuarioView: View {
     @State private var navigateToConfiguraciones = false
     @State private var navigateToEditarPerfil = false
 
-    // NUEVOS estados para picker
     @State private var showImagePicker = false
     @State private var selectedImage: UIImage?
     @State private var useCamera = true
@@ -22,87 +22,64 @@ struct PerfilUsuarioView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color(hex: "#B1B3FB").ignoresSafeArea()
+                Color.white.ignoresSafeArea()
 
-                VStack(spacing: 0) {
-                    HStack {
-                        Button { dismiss() } label: {
-                            Image(systemName: "chevron.left")
-                                .foregroundColor(.black)
-                                .padding()
-                        }
-
-                        Spacer()
-
-                        Button {
-                            navigateToConfiguraciones = true
-                        } label: {
-                            Image(systemName: "gearshape")
-                                .foregroundColor(.black)
-                                .padding()
-                        }
-                    }
-                    .background(Color(hex: "#B1B3FB"))
-
-                    ScrollView(.vertical, showsIndicators: false) {
-                        VStack(spacing: 20) {
-                            // 👤 Imagen de perfil
-                            ZStack(alignment: .topTrailing) {
-                                if let fotoURL = fotoURL {
-                                    AsyncImage(url: fotoURL) { image in
-                                        image.resizable()
-                                    } placeholder: {
-                                        ProgressView()
-                                    }
+                ScrollView(.vertical, showsIndicators: false) {
+                    VStack(spacing: 20) {
+                        ZStack(alignment: .topTrailing) {
+                            if let fotoURL = fotoURL {
+                                AsyncImage(url: fotoURL) { image in
+                                    image.resizable()
+                                } placeholder: {
+                                    ProgressView()
+                                }
+                                .frame(width: 140, height: 140)
+                                .clipShape(Circle())
+                                .shadow(radius: 5)
+                            } else if let selectedImage = selectedImage {
+                                Image(uiImage: selectedImage)
+                                    .resizable()
                                     .frame(width: 140, height: 140)
                                     .clipShape(Circle())
                                     .shadow(radius: 5)
-                                } else if let selectedImage = selectedImage {
-                                    Image(uiImage: selectedImage)
-                                        .resizable()
-                                        .frame(width: 140, height: 140)
-                                        .clipShape(Circle())
-                                        .shadow(radius: 5)
-                                } else {
-                                    Circle()
-                                        .fill(Color.white.opacity(0.3))
-                                        .frame(width: 140, height: 140)
-                                        .overlay(
-                                            Image(systemName: "person.fill")
-                                                .resizable()
-                                                .scaledToFit()
-                                                .foregroundColor(.white)
-                                                .padding(30)
-                                        )
-                                }
-
-                                Button {
-                                    showImagePicker = true
-                                } label: {
-                                    Image(systemName: "camera")
-                                        .padding(8)
-                                        .background(Color.white)
-                                        .clipShape(Circle())
-                                        .shadow(radius: 2)
-                                }
-                                .offset(x: 10, y: -10)
+                            } else {
+                                Circle()
+                                    .fill(appSettings.colorBoton.opacity(0.5))
+                                    .frame(width: 140, height: 140)
+                                    .overlay(
+                                        Image(systemName: "person.fill")
+                                            .resizable()
+                                            .scaledToFit()
+                                            .foregroundColor(.white)
+                                            .padding(30)
+                                    )
                             }
 
-                            Text(nombre.isEmpty ? "Alias" : nombre)
-                                .font(.title2)
-                                .fontWeight(.semibold)
-
-                            Group {
-                                perfilCampo(titulo: "Nombres y Apellidos", valor: nombre)
-                                perfilCampo(titulo: "Correo Electrónico", valor: authVM.user?.email ?? "Sin correo")
-                                perfilCampo(titulo: "Descripción", valor: descripcion)
+                            Button {
+                                navigateToEditarPerfil = true
+                            } label: {
+                                Image(systemName: "pencil")
+                                    .padding(8)
+                                    .background(Color.white)
+                                    .clipShape(Circle())
+                                    .shadow(radius: 2)
                             }
-                            .padding(.horizontal)
+                            .offset(x: 10, y: -10)
                         }
-                        .padding(.top, 10)
-                        .padding(.bottom, 40)
+
+                        Text(nombre.isEmpty ? "Alias" : nombre)
+                            .font(.custom(appSettings.fuente, size: appSettings.tamanoFuente + 2))
+                            .fontWeight(.semibold)
+
+                        Group {
+                            perfilCampo(titulo: "Nombres y Apellidos", valor: nombre)
+                            perfilCampo(titulo: "Correo Electrónico", valor: authVM.user?.email ?? "Sin correo")
+                            perfilCampo(titulo: "Descripción", valor: descripcion)
+                        }
+                        .padding(.horizontal)
                     }
-                    .scrollBounceBehavior(.basedOnSize)
+                    .padding(.top, 10)
+                    .padding(.bottom, 40)
                 }
 
                 NavigationLink("", destination: ConfiguracionesView(), isActive: $navigateToConfiguraciones)
@@ -112,7 +89,35 @@ struct PerfilUsuarioView: View {
             .sheet(isPresented: $showImagePicker, onDismiss: subirImagen) {
                 ImagePicker(sourceType: .camera, selectedImage: $selectedImage)
             }
-            .navigationBarHidden(true)
+            .navigationTitle("")
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden(true)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "chevron.left")
+                            .foregroundColor(.black)
+                    }
+                }
+                ToolbarItem(placement: .principal) {
+                    Text("Perfil de Usuario")
+                        .font(.custom(appSettings.fuente, size: appSettings.tamanoFuente + 2))
+                        .foregroundColor(.black)
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        navigateToConfiguraciones = true
+                    } label: {
+                        Image(systemName: "gearshape")
+                            .foregroundColor(.black)
+                    }
+                }
+            }
+            .toolbarBackground(appSettings.colorTema.opacity(1), for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
+            .appStyle()
         }
     }
 
@@ -156,11 +161,16 @@ struct PerfilUsuarioView: View {
 
     func perfilCampo(titulo: String, valor: String) -> some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(titulo).font(.subheadline)
+            Text(titulo)
+                .font(.subheadline)
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color.white.opacity(0.3))
+                .fill(appSettings.colorBoton.opacity(0.5))
                 .frame(height: 50)
-                .overlay(Text(valor).padding(.horizontal).frame(maxWidth: .infinity, alignment: .leading))
+                .overlay(
+                    Text(valor)
+                        .padding(.horizontal)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                )
         }
     }
 }

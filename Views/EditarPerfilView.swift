@@ -6,145 +6,161 @@ import FirebaseFirestore
 
 struct EditarPerfilView: View {
     @EnvironmentObject var authVM: AuthViewModel
+    @EnvironmentObject var appSettings: AppSettings
     @Environment(\.dismiss) var dismiss
 
     @State private var nombre = ""
     @State private var descripcion = ""
     @State private var imagenSeleccionada: UIImage?
-    @State private var mostrarSelector = false
     @State private var itemSeleccionado: PhotosPickerItem? = nil
 
-    var body: some View {
-        ZStack {
-            Color(hex: "#B1B3FB").ignoresSafeArea()
+    @State private var mostrarActionSheet = false
+    @State private var mostrarPhotosPicker = false
+    @State private var mostrarCameraPicker = false
 
-            VStack(spacing: 20) {
-                // Encabezado
-                HStack {
-                    Button(action: { dismiss() }) {
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                Color.white.ignoresSafeArea()
+
+                ScrollView {
+                    VStack(spacing: 20) {
+                        // Imagen de perfil
+                        ZStack(alignment: .bottomTrailing) {
+                            if let imagen = imagenSeleccionada {
+                                Image(uiImage: imagen)
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 140, height: 140)
+                                    .clipShape(Circle())
+                                    .shadow(radius: 5)
+                            } else {
+                                Circle()
+                                    .fill(Color.white.opacity(0.3))
+                                    .frame(width: 140, height: 140)
+                                    .overlay(
+                                        Image(systemName: "person.fill")
+                                            .resizable()
+                                            .scaledToFit()
+                                            .padding(30)
+                                            .foregroundColor(.white)
+                                    )
+                            }
+
+                            Button {
+                                mostrarActionSheet = true
+                            } label: {
+                                Image(systemName: "pencil")
+                                    .padding(6)
+                                    .background(appSettings.colorBoton)
+                                    .clipShape(Circle())
+                                    .shadow(radius: 2)
+                            }
+                        }
+                        .frame(width: 140, height: 140)
+
+                        // Nombres
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Nombres y Apellidos")
+                                .font(.subheadline)
+                            TextField("Nombre", text: $nombre)
+                                .padding()
+                                .background(appSettings.colorBoton.opacity(0.5))
+                                .cornerRadius(12)
+                        }
+
+                        // Correo
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Correo Electrónico")
+                                .font(.subheadline)
+                            Text(authVM.user?.email ?? "")
+                                .padding()
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .background(appSettings.colorBoton.opacity(0.5))
+                                .cornerRadius(12)
+                        }
+
+                        // Descripción
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Descripción")
+                                .font(.subheadline)
+                            TextEditor(text: $descripcion)
+                                .padding()
+                                .frame(height: 100)
+                                .background(appSettings.colorBoton.opacity(0.5))
+                                .cornerRadius(12)
+                        }
+
+                        // Botón guardar
+                        Button {
+                            guardarPerfil()
+                        } label: {
+                            Text("Guardar cambios")
+                                .bold()
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(appSettings.colorBoton)
+                                .foregroundColor(.white)
+                                .cornerRadius(12)
+                        }
+                    }
+                    .padding()
+                }
+            }
+            .navigationTitle("")
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden(true)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button { dismiss() } label: {
                         Image(systemName: "chevron.left")
                             .foregroundColor(.black)
-                            .padding()
                     }
-                    Spacer()
+                }
+                ToolbarItem(placement: .principal) {
                     Text("Editar Perfil")
-                        .font(.headline)
-                    Spacer()
-                    Image(systemName: "gearshape") // Ícono ficticio de configuración
-                        .padding()
-                        .opacity(0) // Para mantener simetría
+                        .font(.custom(appSettings.fuente, size: appSettings.tamanoFuente + 2))
+                        .foregroundColor(.black)
                 }
-
-                Spacer()
-
-                // Imagen de perfil
-                ZStack {
-                    if let imagen = imagenSeleccionada {
-                        Image(uiImage: imagen)
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 140, height: 140)
-                            .clipShape(Circle())
-                            .overlay(Circle().stroke(Color.white, lineWidth: 4))
-                            .shadow(radius: 5)
-                    } else {
-                        Circle()
-                            .fill(Color.white.opacity(0.3))
-                            .frame(width: 140, height: 140)
-                            .overlay(
-                                Image(systemName: "person.fill")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .padding(30)
-                                    .foregroundColor(.white)
-                            )
-                    }
-
-                    Button {
-                        mostrarSelector = true
-                    } label: {
-                        Image(systemName: "pencil")
-                            .padding(6)
-                            .background(Color.white)
-                            .clipShape(Circle())
-                            .offset(x: 50, y: 50)
-                    }
-                }
-
-                // Nombre
-                VStack(alignment: .leading) {
-                    Text("Nombres y Apellidos")
-                        .font(.subheadline)
-                    TextField("Nombre", text: $nombre)
-                        .padding()
-                        .background(Color.white.opacity(0.3))
-                        .cornerRadius(12)
-                }
-                .padding(.horizontal)
-
-                // Correo
-                VStack(alignment: .leading) {
-                    Text("Correo Electrónico")
-                        .font(.subheadline)
-                    Text(authVM.user?.email ?? "")
-                        .padding()
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(Color.white.opacity(0.3))
-                        .cornerRadius(12)
-                }
-                .padding(.horizontal)
-
-                // Descripción
-                VStack(alignment: .leading) {
-                    Text("Descripción")
-                        .font(.subheadline)
-                    TextEditor(text: $descripcion)
-                        .padding()
-                        .frame(height: 100)
-                        .background(Color.white.opacity(0.3))
-                        .cornerRadius(12)
-                }
-                .padding(.horizontal)
-
-                // Botón Guardar
-                Button(action: {
-                    guardarPerfil()
-                }) {
-                    Text("Guardar cambios")
-                        .bold()
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(Color(hex: "#8A8CFF"))
-                        .foregroundColor(.white)
-                        .cornerRadius(12)
-                }
-                .padding(.horizontal)
-
-                Spacer()
             }
-            .padding()
-        }
-        .photosPicker(isPresented: $mostrarSelector, selection: $itemSeleccionado, matching: .images, preferredItemEncoding: .automatic)
-        .onChange(of: itemSeleccionado) { nuevoItem in
-            if let item = nuevoItem {
-                item.loadTransferable(type: Data.self) { result in
-                    DispatchQueue.main.async {
-                        switch result {
-                        case .success(let data):
-                            if let data, let uiImage = UIImage(data: data) {
-                                imagenSeleccionada = uiImage
+            .toolbarBackground(appSettings.colorTema.opacity(1), for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
+            .actionSheet(isPresented: $mostrarActionSheet) {
+                ActionSheet(
+                    title: Text("Seleccionar foto"),
+                    buttons: [
+                        .default(Text("Galería")) { mostrarPhotosPicker = true },
+                        .default(Text("Cámara")) { mostrarCameraPicker = true },
+                        .cancel()
+                    ]
+                )
+            }
+            .photosPicker(isPresented: $mostrarPhotosPicker, selection: $itemSeleccionado, matching: .images, preferredItemEncoding: .automatic)
+            .sheet(isPresented: $mostrarCameraPicker) {
+                ImagePicker(sourceType: .camera, selectedImage: $imagenSeleccionada)
+            }
+            .onChange(of: itemSeleccionado) { nuevoItem in
+                if let item = nuevoItem {
+                    item.loadTransferable(type: Data.self) { result in
+                        DispatchQueue.main.async {
+                            switch result {
+                            case .success(let data):
+                                if let data, let uiImage = UIImage(data: data) {
+                                    imagenSeleccionada = uiImage
+                                }
+                            case .failure(let error):
+                                print("Error al cargar imagen: \(error.localizedDescription)")
                             }
-                        case .failure(let error):
-                            print("Error al cargar imagen: \(error.localizedDescription)")
                         }
                     }
                 }
             }
-        }
-        .onAppear {
-            if let user = authVM.user {
-                nombre = user.displayName ?? ""
+            .onAppear {
+                if let user = authVM.user {
+                    nombre = user.displayName ?? ""
+                }
             }
+            .appStyle()
         }
     }
 

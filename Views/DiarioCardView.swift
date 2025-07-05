@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct DiarioCardView: View {
+    @EnvironmentObject var appSettings: AppSettings
     let diario: Diario
     let firma: [CGPoint]
     let isVisible: Bool
@@ -12,7 +13,12 @@ struct DiarioCardView: View {
                     .font(.largeTitle)
 
                 Text(diario.titulo)
-                    .font(.title3)
+                    .font(.custom(
+                        appSettings.fuente == "System"
+                            ? UIFont.systemFont(ofSize: appSettings.tamanoFuente).fontName
+                            : appSettings.fuente,
+                        size: appSettings.tamanoFuente
+                    ))
                     .fontWeight(.semibold)
                     .multilineTextAlignment(.center)
                     .foregroundColor(.black)
@@ -21,9 +27,9 @@ struct DiarioCardView: View {
             }
             .padding()
             .frame(width: 160, height: 160)
-            .background(Color.white.opacity(0.5))
+            .background(appSettings.colorTema.opacity(0.5)) // ✅ Fondo dinámico
             .cornerRadius(20)
-            .transition(.scale.combined(with: .opacity))
+            .transition(.opacity.animation(.easeOut(duration: 0.3)))
         }
     }
 }

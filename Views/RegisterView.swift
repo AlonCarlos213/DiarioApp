@@ -1,15 +1,11 @@
-//
-//  RegisterView.swift
-//  DiarioApp
-//
-//  Created by Carlos Alonso Mamani Ccollque on 13/06/25.
-//
-
 import SwiftUI
 import FirebaseAuth
 
 struct RegisterView: View {
+    @EnvironmentObject var appSettings: AppSettings
     @EnvironmentObject var authVM: AuthViewModel
+    @Environment(\.dismiss) var dismiss
+
     @State private var nombres = ""
     @State private var apellidos = ""
     @State private var email = ""
@@ -19,18 +15,15 @@ struct RegisterView: View {
 
     var body: some View {
         ZStack {
-            Color(hex: "#B1B3FB").ignoresSafeArea()
+            Color.white.ignoresSafeArea()
 
             ScrollView {
                 VStack(spacing: 20) {
-                    Spacer(minLength: 30)
-
-                    // Título
                     Text("Crear cuenta")
-                        .font(.system(size: 26, weight: .bold))
+                        .font(.custom(appSettings.fuente, size: appSettings.tamanoFuente + 4))
+                        .fontWeight(.semibold)
                         .foregroundColor(.black)
 
-                    // Campos de entrada
                     Group {
                         TextField("Nombres", text: $nombres)
                         TextField("Apellidos", text: $apellidos)
@@ -39,25 +32,55 @@ struct RegisterView: View {
                         SecureField("Contraseña", text: $password)
                     }
                     .padding()
-                    .background(Color(hex: "#8A8CFF"))
-                    .foregroundColor(.black)
+                    .background(appSettings.colorTema.opacity(0.3))
                     .cornerRadius(12)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(appSettings.colorTema, lineWidth: 1)
+                    )
+                    .font(.custom(appSettings.fuente, size: appSettings.tamanoFuente))
                     .padding(.horizontal)
+                    .foregroundColor(.black)
 
-                    // Error si existe
                     if let error = error {
                         Text(error)
                             .foregroundColor(.red)
                             .multilineTextAlignment(.center)
+                            .font(.custom(appSettings.fuente, size: appSettings.tamanoFuente - 2))
                             .padding(.horizontal)
                     }
 
-                    // Separador
-                    Text("o")
-                        .font(.caption)
-                        .padding(.top, 10)
+                    Button("Registrarse") {
+                        authVM.registerWithEmail(email: email, password: password) { err in
+                            if let err = err as NSError? {
+                                if err.code == AuthErrorCode.emailAlreadyInUse.rawValue {
+                                    error = "Este correo ya está registrado. Intenta iniciar sesión."
+                                } else {
+                                    error = err.localizedDescription
+                                }
+                            } else {
+                                error = nil
+                                showVerificationAlert = true
+                                if let user = Auth.auth().currentUser {
+                                    let changeRequest = user.createProfileChangeRequest()
+                                    changeRequest.displayName = "\(nombres) \(apellidos)"
+                                    changeRequest.commitChanges(completion: nil)
+                                }
+                            }
+                        }
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(appSettings.colorTema)
+                    .foregroundColor(.white)
+                    .cornerRadius(16)
+                    .font(.custom(appSettings.fuente, size: appSettings.tamanoFuente + 2))
+                    .padding(.horizontal)
 
-                    // Botones sociales
+                    Text("o")
+                        .font(.custom(appSettings.fuente, size: appSettings.tamanoFuente - 2))
+                        .foregroundColor(.gray)
+
                     HStack(spacing: 30) {
                         Button {
                             authVM.signInWithFacebook()
@@ -78,39 +101,29 @@ struct RegisterView: View {
                         }
                     }
 
-                    // Botón principal
-                    Button("Registrarse") {
-                        authVM.registerWithEmail(email: email, password: password) { err in
-                            if let err = err as NSError? {
-                                if err.code == AuthErrorCode.emailAlreadyInUse.rawValue {
-                                    error = "Este correo ya está registrado. Intenta iniciar sesión."
-                                } else {
-                                    error = err.localizedDescription
-                                }
-                            } else {
-                                error = nil
-                                showVerificationAlert = true
-
-                                if let user = Auth.auth().currentUser {
-                                    let changeRequest = user.createProfileChangeRequest()
-                                    changeRequest.displayName = "\(nombres) \(apellidos)"
-                                    changeRequest.commitChanges(completion: nil)
-                                }
-                            }
-                        }
-                    }
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(Color(hex: "#8A8CFF"))
-                    .foregroundColor(.white)
-                    .cornerRadius(16)
-                    .padding(.horizontal)
-
                     Spacer()
                 }
-                .padding(.bottom)
+                .padding()
             }
         }
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "chevron.left")
+                        .foregroundColor(.black)
+                }
+            }
+            ToolbarItem(placement: .principal) {
+                Text("Registro")
+                    .font(.custom(appSettings.fuente, size: appSettings.tamanoFuente + 2))
+                    .foregroundColor(.black)
+            }
+        }
+        .toolbarBackground(appSettings.colorTema.opacity(1), for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
         .alert("Verificación enviada", isPresented: $showVerificationAlert) {
             Button("Entendido", role: .cancel) { }
         } message: {
@@ -118,3 +131,4 @@ struct RegisterView: View {
         }
     }
 }
+

@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct InicioView: View {
+    @EnvironmentObject var appSettings: AppSettings
     var body: some View {
         NavigationView {
             VStack(spacing: 30) {
@@ -31,7 +32,7 @@ struct InicioView: View {
                         .font(.headline)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color(hex: "#8A8CFF"))
+                        .background(appSettings.colorBoton)
                         .foregroundColor(.white)
                         .cornerRadius(16)
                 }
@@ -42,7 +43,7 @@ struct InicioView: View {
                         .font(.headline)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color(hex: "#8A8CFF"))
+                        .background(appSettings.colorBoton)
                         .foregroundColor(.white)
                         .cornerRadius(16)
                 }
@@ -50,8 +51,9 @@ struct InicioView: View {
                 Spacer()
             }
             .padding()
-            .background(Color(hex: "#B1B3FB").ignoresSafeArea())
+            .background(Color.white.ignoresSafeArea())
         }
+        .appStyle()
     }
 }
 

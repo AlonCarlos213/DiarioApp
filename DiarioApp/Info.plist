@@ -4,15 +4,22 @@
 <dict>
 	<!-- Facebook y Google Login -->
 	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>fb1716566305920207</string>
-				<string>com.googleusercontent.apps.508446416169-hq6vgs16qb541402cvlas8tsf89qt316</string>
-			</array>
-		</dict>
-	</array>
+<array>
+	<dict>
+		<key>CFBundleURLSchemes</key>
+		<array>
+			<string>fb1716566305920207</string>
+			<string>com.googleusercontent.apps.508446416169-hq6vgs16qb541402cvlas8tsf89qt316</string>
+		</array>
+	</dict>
+	<dict>
+		<key>CFBundleURLSchemes</key>
+		<array>
+			<string>diarioapp</string>
+		</array>
+	</dict>
+</array>
+
 
 	<key>FacebookAppID</key>
 	<string>1716566305920207</string>

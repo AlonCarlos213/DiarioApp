@@ -3,6 +3,7 @@ import FirebaseFirestore
 
 struct HomeView: View {
     @EnvironmentObject var authVM: AuthViewModel
+    @EnvironmentObject var appSettings: AppSettings
     @State private var diarios: [Diario] = []
     @State private var busqueda = ""
     @State private var firmas: [String: [CGPoint]] = [:]
@@ -14,6 +15,7 @@ struct HomeView: View {
     @State private var diariosEliminando: Set<String> = []
     @State private var mostrarPerfil = false
     @State private var fotoURL: String? = nil
+    @State private var mostrarCrearDiario = false
 
     var diariosFiltrados: [Diario] {
         let texto = busqueda.lowercased()
@@ -35,14 +37,13 @@ struct HomeView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color(hex: "#B1B3FB").ignoresSafeArea()
-
+                Color.white.ignoresSafeArea()
                 VStack(spacing: 10) {
                     // 🔍 Barra de búsqueda + botón de perfil
                     HStack {
                         TextField("Buscar...", text: $busqueda)
                             .padding(9)
-                            .background(Color(hex: "#9DA6E8"))
+                            .background(appSettings.colorBoton.opacity(0.3))
                             .cornerRadius(20)
                             .padding(.leading)
 
@@ -70,7 +71,7 @@ struct HomeView: View {
                                         .resizable()
                                         .scaledToFit()
                                         .frame(width: 36, height: 36)
-                                        .foregroundColor(Color(hex: "#8A8CFF"))
+                                        .foregroundColor(appSettings.colorBoton)
                                 }
                             }
                         }
@@ -102,7 +103,7 @@ struct HomeView: View {
                                     }
                                     Button("Eliminar", role: .destructive) {
                                         if let id = diario.id {
-                                            withAnimation {
+                                            withAnimation(.easeOut(duration: 0.3)) {
                                                 diariosEliminando.insert(id)
                                             }
                                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
@@ -119,7 +120,6 @@ struct HomeView: View {
                             }
                         }
                         .padding([.horizontal, .bottom])
-                        .animation(.spring(), value: diariosFiltrados)
                         .padding(.top, 20) // o ajusta a 30 o 40 si aún está muy pegado
                     }
                 }
@@ -129,22 +129,14 @@ struct HomeView: View {
                     Spacer()
                     HStack {
                         Spacer()
-                        NavigationLink(destination:
-                            CrearDiarioView(
-                                onDiarioCreado: { diario, firma in
-                                    if let id = diario.id {
-                                        firmas[id] = firma
-                                    }
-                                    cargarDiarios()
-                                },
-                                onFirmaRegistrada: { _ in }
-                            ).environmentObject(authVM)
-                        ) {
+                        Button {
+                            mostrarCrearDiario = true
+                        } label: {
                             Image(systemName: "plus")
                                 .font(.title)
                                 .foregroundColor(.white)
                                 .padding()
-                                .background(Color(hex: "#8A8CFF"))
+                                .background(appSettings.colorBoton)
                                 .clipShape(Circle())
                                 .shadow(radius: 5)
                         }
@@ -152,9 +144,11 @@ struct HomeView: View {
                     }
                 }
             }
+            .appStyle()
             .onAppear {
                 cargarDiarios()
                 cargarFotoPerfil()
+                cargarDiariosCompartidos()
             }
             .sheet(isPresented: Binding<Bool>(
                 get: { diarioSeleccionado != nil && (mostrarEditor || mostrarDetalle) },
@@ -186,23 +180,31 @@ struct HomeView: View {
                 }
             }
             .sheet(isPresented: $mostrarCompartir) {
-                if let diario = diarioSeleccionado {
-                    let titulo = diario.titulo
-                    let emocion = diario.emocion
-                    let fecha = formatearFecha(diario.fecha)
-                    let contenido = diario.contenido.isEmpty ? "Sin contenido registrado." : diario.contenido
-
-                    ActivityView(activityItems: [
-                        """
-                        📝 Diario: \(titulo)
-                        😄 Emoción: \(emocion)
-                        📅 Fecha: \(fecha)
-
-                        ✍️ Contenido:
-                        \(contenido)
-                        """
-                    ])
+                if let diario = diarioSeleccionado, let id = diario.id {
+                    let enlace = URL(string: "diarioapp://diario?id=\(id)")!
+                    ActivityView(activityItems: [enlace])
+                } else if let diario = diarioSeleccionado {
+                    let texto = """
+                    📝 Diario: \(diario.titulo)
+                    😄 Emoción: \(diario.emocion)
+                    ✍️ Contenido:
+                    \(diario.contenido)
+                    """
+                    ActivityView(activityItems: [texto])
                 }
+            }
+            .sheet(isPresented: $mostrarCrearDiario) {
+                CrearDiarioView(
+                    onDiarioCreado: { diario, firma in
+                        if let id = diario.id {
+                            firmas[id] = firma
+                        }
+                        cargarDiarios()
+                        mostrarCrearDiario = false // Esto cierra el sheet
+                    },
+                    onFirmaRegistrada: { _ in }
+                )
+                .environmentObject(authVM)
             }
         }
     }
@@ -211,8 +213,7 @@ struct HomeView: View {
         guard let userId = authVM.user?.uid else { return }
 
         let db = Firestore.firestore()
-        db.collection("diarios")
-            .whereField("userId", isEqualTo: userId)
+        db.collection("usuarios").document(userId).collection("diarios")
             .order(by: "fecha", descending: true)
             .getDocuments { snapshot, error in
                 if let error = error {
@@ -220,13 +221,21 @@ struct HomeView: View {
                     return
                 }
 
-                diarios = snapshot?.documents.compactMap {
-                    var diario = try? $0.data(as: Diario.self)
-                    diario?.id = $0.documentID
+                diarios = snapshot?.documents.compactMap { doc in
+                    let data = doc.data()
+                    let id = doc.documentID
+                    let titulo = data["titulo"] as? String ?? ""
+                    let contenido = data["contenido"] as? String ?? ""
+                    let emocion = data["emocion"] as? String ?? ""
+                    let fecha = (data["fecha"] as? Timestamp)?.dateValue() ?? Date()
+                    let userId = data["userId"] as? String ?? ""
+                    let firma = data["firma"] as? [[String: CGFloat]]
+                    let compartidoCon = data["compartidoCon"] as? [String] ?? []
+                    let imagenURL = data["imagenURL"] as? String
 
-                    if let firmaArray = $0.data()["firma"] as? [[String: CGFloat]],
-                       let id = diario?.id {
-                        let puntos = firmaArray.compactMap { dict in
+                    // Procesar firma
+                    if let firmaArray = firma {
+                        let puntos = firmaArray.compactMap { dict -> CGPoint? in
                             if let x = dict["x"], let y = dict["y"] {
                                 return CGPoint(x: x, y: y)
                             }
@@ -235,22 +244,38 @@ struct HomeView: View {
                         firmas[id] = puntos
                     }
 
-                    return diario
+                    return Diario(
+                        id: id,
+                        titulo: titulo,
+                        contenido: contenido,
+                        emocion: emocion,
+                        fecha: fecha,
+                        userId: userId,
+                        firma: firma,
+                        imagenURL: imagenURL,
+                        compartidoCon: compartidoCon
+                    )
                 } ?? []
             }
     }
-
+    
     func eliminarDiario(_ diario: Diario) {
-        guard let id = diario.id else { return }
+        guard let id = diario.id, let userId = authVM.user?.uid else { return }
 
-        Firestore.firestore().collection("diarios").document(id).delete { error in
-            if let error = error {
-                print("Error al eliminar: \(error.localizedDescription)")
-            } else {
-                diarios.removeAll { $0.id == id }
+        Firestore.firestore()
+            .collection("usuarios")
+            .document(userId)
+            .collection("diarios")
+            .document(id)
+            .delete { error in
+                if let error = error {
+                    print("Error al eliminar: \(error.localizedDescription)")
+                } else {
+                    diarios.removeAll { $0.id == id }
+                }
             }
-        }
     }
+    
     func formatearFecha(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateStyle = .long
@@ -258,6 +283,7 @@ struct HomeView: View {
         formatter.locale = Locale(identifier: "es_PE")
         return formatter.string(from: date)
     }
+    
     func cargarFotoPerfil() {
         guard let userId = authVM.user?.uid else { return }
 
@@ -268,5 +294,55 @@ struct HomeView: View {
             }
         }
     }
+    func cargarDiariosCompartidos() {
+        guard let userId = authVM.user?.uid else { return }
+
+        let db = Firestore.firestore()
+        db.collectionGroup("diarios")
+            .whereField("compartidoCon", arrayContains: userId)
+            .order(by: "fecha", descending: true)
+            .getDocuments { snapshot, error in
+                if let error = error {
+                    print("Error al cargar compartidos: \(error.localizedDescription)")
+                    return
+                }
+
+                let compartidos: [Diario] = snapshot?.documents.compactMap { doc in
+                    let data = doc.data()
+                    let id = doc.documentID
+                    let titulo = data["titulo"] as? String ?? ""
+                    let contenido = data["contenido"] as? String ?? ""
+                    let emocion = data["emocion"] as? String ?? ""
+                    let fecha = (data["fecha"] as? Timestamp)?.dateValue() ?? Date()
+                    let userId = data["userId"] as? String ?? ""
+                    let firma = data["firma"] as? [[String: CGFloat]]
+                    let compartidoCon = data["compartidoCon"] as? [String] ?? []
+                    let imagenURL = data["imagenURL"] as? String
+
+                    // Guardar firma en el diccionario
+                    if let firmaArray = firma {
+                        let puntos = firmaArray.compactMap { dict -> CGPoint? in
+                            if let x = dict["x"], let y = dict["y"] {
+                                return CGPoint(x: x, y: y)
+                            }
+                            return nil
+                        }
+                        firmas[id] = puntos
+                    }
+                    return Diario(
+                        id: id,
+                        titulo: titulo,
+                        contenido: contenido,
+                        emocion: emocion,
+                        fecha: fecha,
+                        userId: userId,
+                        firma: firma,
+                        imagenURL: imagenURL,
+                        compartidoCon: compartidoCon
+                    )
+                } ?? []
+
+                diarios.append(contentsOf: compartidos)
+            }
+    }
 }
-    

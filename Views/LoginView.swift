@@ -1,64 +1,60 @@
-//
-//  LoginView.swift
-//  DiarioApp
-//
-//  Created by Carlos Alonso Mamani Ccollque on 13/06/25.
-//
-
-// Reemplaza el contenido actual de LoginView.swift por esto:
-
 import SwiftUI
 
 struct LoginView: View {
     @EnvironmentObject var authVM: AuthViewModel
+    @EnvironmentObject var appSettings: AppSettings
+    @Environment(\.dismiss) var dismiss
+
     @State private var email = ""
     @State private var password = ""
     @State private var error: String?
 
     var body: some View {
         ZStack {
-            Color(hex: "#B1B3FB").ignoresSafeArea()
+            Color.white.ignoresSafeArea()
 
             ScrollView {
                 VStack(spacing: 20) {
-                    Spacer(minLength: 40)
-
-                    // Logo
                     Image("mindscribe_logo")
                         .resizable()
                         .frame(width: 120, height: 120)
                         .clipShape(RoundedRectangle(cornerRadius: 20))
 
-                    // Título
                     Text("MindScribe")
-                        .font(.system(size: 28, weight: .bold))
+                        .font(.custom(appSettings.fuente, size: appSettings.tamanoFuente + 4))
+                        .fontWeight(.semibold)
                         .foregroundColor(.black)
 
-                    // Campo: Email
                     TextField("Correo electrónico", text: $email)
                         .padding()
-                        .background(Color(hex: "#8A8CFF"))
-                        .foregroundColor(.black)
+                        .background(appSettings.colorTema.opacity(0.3))
                         .cornerRadius(12)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(appSettings.colorTema, lineWidth: 1)
+                        )
+                        .font(.custom(appSettings.fuente, size: appSettings.tamanoFuente))
                         .padding(.horizontal)
 
-                    // Campo: Contraseña
                     SecureField("Contraseña", text: $password)
                         .padding()
-                        .background(Color(hex: "#8A8CFF"))
-                        .foregroundColor(.black)
+                        .background(appSettings.colorTema.opacity(0.3))
                         .cornerRadius(12)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(appSettings.colorTema, lineWidth: 1)
+                        )
+                        .font(.custom(appSettings.fuente, size: appSettings.tamanoFuente))
                         .padding(.horizontal)
 
-                    // Error
                     if let error = error {
                         Text(error)
                             .foregroundColor(.red)
                             .multilineTextAlignment(.center)
+                            .font(.custom(appSettings.fuente, size: appSettings.tamanoFuente - 2))
                             .padding(.horizontal)
                     }
 
-                    // Botón: Iniciar sesión
                     Button("Iniciar sesión") {
                         authVM.signInWithEmail(email: email, password: password) { err in
                             if let err = err {
@@ -68,17 +64,16 @@ struct LoginView: View {
                     }
                     .padding()
                     .frame(maxWidth: .infinity)
-                    .background(Color(hex: "#8A8CFF"))
+                    .background(appSettings.colorTema)
                     .foregroundColor(.white)
                     .cornerRadius(16)
+                    .font(.custom(appSettings.fuente, size: appSettings.tamanoFuente + 2))
                     .padding(.horizontal)
 
-                    // Separador
                     Text("o")
-                        .font(.caption)
-                        .padding(.top, 10)
+                        .font(.custom(appSettings.fuente, size: appSettings.tamanoFuente - 2))
+                        .foregroundColor(.gray)
 
-                    // Social buttons
                     HStack(spacing: 30) {
                         Button {
                             authVM.signInWithFacebook()
@@ -99,23 +94,40 @@ struct LoginView: View {
                         }
                     }
 
-                    // Ir a registro
                     NavigationLink(destination: RegisterView()) {
                         Text("Registrarse")
-                            .font(.headline)
                             .padding()
                             .frame(maxWidth: .infinity)
-                            .background(Color(hex: "#8A8CFF"))
+                            .background(appSettings.colorTema.opacity(0.5))
                             .foregroundColor(.white)
                             .cornerRadius(16)
+                            .font(.custom(appSettings.fuente, size: appSettings.tamanoFuente + 2))
                             .padding(.horizontal)
                     }
 
                     Spacer()
                 }
-                .padding(.bottom, 40)
+                .padding()
             }
         }
-        .ignoresSafeArea(.keyboard)
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "chevron.left")
+                        .foregroundColor(.black)
+                }
+            }
+            ToolbarItem(placement: .principal) {
+                Text("Iniciar sesión")
+                    .font(.custom(appSettings.fuente, size: appSettings.tamanoFuente + 2))
+                    .foregroundColor(.black)
+            }
+        }
+        .toolbarBackground(appSettings.colorTema.opacity(1), for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
     }
 }
+

@@ -10,7 +10,7 @@ struct ImagePicker: UIViewControllerRepresentable {
         let picker = UIImagePickerController()
         picker.delegate = context.coordinator
         picker.sourceType = sourceType
-        picker.allowsEditing = true // Puedes poner true si quieres permitir recorte
+        picker.allowsEditing = false // Puedes poner true si quieres permitir recorte
         return picker
     }
 

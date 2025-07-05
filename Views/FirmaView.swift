@@ -9,12 +9,12 @@ import SwiftUI
 
 struct FirmaView: View {
     @Binding var trazos: [CGPoint]
+    @EnvironmentObject var appSettings: AppSettings
 
     var body: some View {
         ZStack {
-            Color.white.opacity(0.3)
+            appSettings.colorBoton.opacity(0.2)
                 .cornerRadius(12)
-
             Canvas { context, size in
                 var path = Path()
                 for point in trazos {
