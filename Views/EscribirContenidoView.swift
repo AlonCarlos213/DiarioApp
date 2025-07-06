@@ -3,31 +3,43 @@ import FirebaseFirestore
 import FirebaseStorage
 
 struct EscribirContenidoView: View {
-    var nombreDiario: String
-    var emocion: String
-    var firmaPuntos: [CGPoint]
+    
+    // MARK: - Datos de entrada
+    
+    var nombreDiario: String        // Nombre del diario
+    var emocion: String             // Emocion seleccionada
+    var firmaPuntos: [CGPoint]      // Firma capturada
+    
     @EnvironmentObject var appSettings: AppSettings
     @EnvironmentObject var authVM: AuthViewModel
     @Environment(\.dismiss) var dismiss
-
+    
+    // MARK: - Callbacks
+    
     var onGuardar: (_ diario: Diario, _ firma: [CGPoint]) -> Void
+    
+    // MARK: - Estados locales
+    
+    @State private var contenidoAttr = NSAttributedString(string: "")   // Contenido enriquecido
+    @State private var selectedImage: UIImage? = nil                    // Imagen adjunta
+    @State private var mostrandoPicker = false                          // Mostrar selector imagen
 
-    @State private var contenidoAttr = NSAttributedString(string: "")
-    @State private var selectedImage: UIImage? = nil
-    @State private var mostrandoPicker = false
-
-    @State private var imageScale: CGFloat = 1.0
+    @State private var imageScale: CGFloat = 1.0                        // Escala imagen
     @State private var lastScale: CGFloat = 1.0
-    @State private var imageOffset: CGSize = .zero
+    @State private var imageOffset: CGSize = .zero                      // Posicion imagen
     @State private var lastOffset: CGSize = .zero
 
     var body: some View {
         NavigationStack {
             ZStack(alignment: .bottomTrailing) {
                 Color.white.ignoresSafeArea()
-
+                
+                // MARK: - Contenido principal
+                
                 ScrollView {
                     VStack(alignment: .leading, spacing: 16) {
+                        
+                        // Título del diario
                         Text("*\(nombreDiario)")
                             .font(.custom(appSettings.fuente, size: appSettings.tamanoFuente + 2))
                             .fontWeight(.semibold)
@@ -36,7 +48,8 @@ struct EscribirContenidoView: View {
                             .padding(.bottom, 4)
                             .background(appSettings.colorTema.opacity(0.5))
                             .cornerRadius(10)
-
+                        
+                        // Botones de formato de texto
                         HStack(spacing: 14) {
                             ForEach(toolbarItems, id: \.0) { item in
                                 Button {
@@ -54,13 +67,15 @@ struct EscribirContenidoView: View {
                         .padding(8)
                         .background(appSettings.colorBoton.opacity(0.5))
                         .cornerRadius(12)
-
+                        
+                        // Area de escritura con formato enriquecido
                         RichTextView(attributedText: $contenidoAttr)
                             .frame(minHeight: 250)
                             .padding(6)
                             .background(appSettings.colorBoton.opacity(0.5))
                             .cornerRadius(16)
-
+                        
+                        // Imagen adjunta (si existe) con gestos
                         if let image = selectedImage {
                             Image(uiImage: image)
                                 .resizable()
@@ -93,7 +108,8 @@ struct EscribirContenidoView: View {
                                 .shadow(radius: 4)
                                 .padding(.vertical)
                         }
-
+                        
+                        // Boton para adjuntar imagen
                         Button {
                             mostrandoPicker = true
                         } label: {
@@ -104,7 +120,8 @@ struct EscribirContenidoView: View {
                             .font(.body)
                             .foregroundColor(appSettings.colorBoton)
                         }
-
+                        
+                        // Visualizacion de la firma
                         Text("Firma registrada:")
                             .font(.custom(appSettings.fuente, size: appSettings.tamanoFuente - 2))
                             .foregroundColor(.gray)
@@ -118,7 +135,8 @@ struct EscribirContenidoView: View {
                     }
                     .padding()
                 }
-
+                
+                // Botón para guardar el diario
                 Button(action: guardarDiario) {
                     Image(systemName: "checkmark")
                         .font(.system(size: 26, weight: .bold))
@@ -130,6 +148,9 @@ struct EscribirContenidoView: View {
                 }
                 .padding()
             }
+            
+            // MARK: - Configuración de toolbar
+            
             .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(true)
@@ -156,7 +177,9 @@ struct EscribirContenidoView: View {
             .appStyle()
         }
     }
-
+    
+    // MARK: - Botones de formato de texto
+    
     var toolbarItems: [(String, Notification.Name)] {
         [
             ("bold", .applyBold),
@@ -169,7 +192,9 @@ struct EscribirContenidoView: View {
             ("textformat", .applyTitle)
         ]
     }
-
+    
+    // MARK: - Guardar diario (con o sin imagen)
+    
     func guardarDiario() {
         guard let userId = authVM.user?.uid else { return }
 
@@ -189,7 +214,9 @@ struct EscribirContenidoView: View {
             guardarEnFirestore(userId: userId, htmlString: htmlString, firma: firmaConvertida, imagenURL: nil)
         }
     }
-
+    
+    // MARK: - Subir imagen a Firebase Storage
+    
     func subirImagen(_ image: UIImage, completion: @escaping (String?) -> Void) {
         guard let imageData = image.jpegData(compressionQuality: 0.8) else {
             completion(nil)
@@ -208,7 +235,9 @@ struct EscribirContenidoView: View {
             }
         }
     }
-
+    
+    // MARK: - Guardar en Firestore
+    
     func guardarEnFirestore(userId: String, htmlString: String, firma: [[String: CGFloat]], imagenURL: String?) {
         let db = Firestore.firestore()
         var data: [String: Any] = [

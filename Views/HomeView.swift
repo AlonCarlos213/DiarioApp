@@ -4,10 +4,15 @@ import FirebaseFirestore
 struct HomeView: View {
     @EnvironmentObject var authVM: AuthViewModel
     @EnvironmentObject var appSettings: AppSettings
+    
+    // MARK: - Estados principales
+    
     @State private var diarios: [Diario] = []
     @State private var busqueda = ""
     @State private var firmas: [String: [CGPoint]] = [:]
-
+    
+    // MARK: - Control de navegación y acciones/
+    
     @State private var mostrarEditor = false
     @State private var diarioSeleccionado: Diario?
     @State private var mostrarDetalle = false
@@ -16,7 +21,9 @@ struct HomeView: View {
     @State private var mostrarPerfil = false
     @State private var fotoURL: String? = nil
     @State private var mostrarCrearDiario = false
-
+    
+    // MARK: - Filtro de búsqueda
+    
     var diariosFiltrados: [Diario] {
         let texto = busqueda.lowercased()
         if texto.isEmpty {
@@ -33,13 +40,15 @@ struct HomeView: View {
         GridItem(.flexible(), spacing: 15),
         GridItem(.flexible(), spacing: 15)
     ]
+    
+    // MARK: - Vista principal
 
     var body: some View {
         NavigationStack {
             ZStack {
                 Color.white.ignoresSafeArea()
                 VStack(spacing: 10) {
-                    // 🔍 Barra de búsqueda + botón de perfil
+                    // MARK: - Barra de búsqueda + perfil
                     HStack {
                         TextField("Buscar...", text: $busqueda)
                             .padding(9)
@@ -83,7 +92,8 @@ struct HomeView: View {
                     }
                     .padding(.top)
 
-                    // 📜 Grid de diarios
+                    // MARK: - Grid de diarios
+                    
                     ScrollView {
                         LazyVGrid(columns: columnas, spacing: 15) {
                             ForEach(diariosFiltrados) { diario in
@@ -124,7 +134,8 @@ struct HomeView: View {
                     }
                 }
 
-                // ➕ Botón flotante
+                // MARK: - Botón flotante de creación
+                
                 VStack {
                     Spacer()
                     HStack {
@@ -144,12 +155,18 @@ struct HomeView: View {
                     }
                 }
             }
+            
+            // MARK: - Eventos del ciclo de vida
+            
             .appStyle()
             .onAppear {
                 cargarDiarios()
                 cargarFotoPerfil()
                 cargarDiariosCompartidos()
             }
+            
+            // MARK: - Sheets
+            
             .sheet(isPresented: Binding<Bool>(
                 get: { diarioSeleccionado != nil && (mostrarEditor || mostrarDetalle) },
                 set: { newValue in
@@ -208,11 +225,15 @@ struct HomeView: View {
             }
         }
     }
-
+    
+    // MARK: - Cargar Diarios del usuario actual
+    
     func cargarDiarios() {
+        // Asegurarse que el usuario esté autenticado
         guard let userId = authVM.user?.uid else { return }
 
         let db = Firestore.firestore()
+        // Consultar la colección de diarios del usuario ordenados por fecha
         db.collection("usuarios").document(userId).collection("diarios")
             .order(by: "fecha", descending: true)
             .getDocuments { snapshot, error in
@@ -220,7 +241,8 @@ struct HomeView: View {
                     print("Error al cargar: \(error.localizedDescription)")
                     return
                 }
-
+                
+                // Mapear los documentos obtenidos a instancias de Diario
                 diarios = snapshot?.documents.compactMap { doc in
                     let data = doc.data()
                     let id = doc.documentID
@@ -233,7 +255,7 @@ struct HomeView: View {
                     let compartidoCon = data["compartidoCon"] as? [String] ?? []
                     let imagenURL = data["imagenURL"] as? String
 
-                    // Procesar firma
+                    // Procesar firma y guardarla en el diccionario local
                     if let firmaArray = firma {
                         let puntos = firmaArray.compactMap { dict -> CGPoint? in
                             if let x = dict["x"], let y = dict["y"] {
@@ -259,7 +281,10 @@ struct HomeView: View {
             }
     }
     
+    // MARK: - Eliminar un diario
+    
     func eliminarDiario(_ diario: Diario) {
+        // Verificar ID y usuario
         guard let id = diario.id, let userId = authVM.user?.uid else { return }
 
         Firestore.firestore()
@@ -271,10 +296,13 @@ struct HomeView: View {
                 if let error = error {
                     print("Error al eliminar: \(error.localizedDescription)")
                 } else {
+                    // Eliminar de la lista local
                     diarios.removeAll { $0.id == id }
                 }
             }
     }
+    
+    // MARK: - Formatear fecha a cadena legible
     
     func formatearFecha(_ date: Date) -> String {
         let formatter = DateFormatter()
@@ -283,6 +311,8 @@ struct HomeView: View {
         formatter.locale = Locale(identifier: "es_PE")
         return formatter.string(from: date)
     }
+    
+    // MARK: - Cargar foto de perfil del usuario
     
     func cargarFotoPerfil() {
         guard let userId = authVM.user?.uid else { return }
@@ -294,6 +324,9 @@ struct HomeView: View {
             }
         }
     }
+    
+    // MARK: - Cargar diarios compartidos con el usuario
+    
     func cargarDiariosCompartidos() {
         guard let userId = authVM.user?.uid else { return }
 
@@ -306,7 +339,7 @@ struct HomeView: View {
                     print("Error al cargar compartidos: \(error.localizedDescription)")
                     return
                 }
-
+                // Mapear y agregar los diarios compartidos
                 let compartidos: [Diario] = snapshot?.documents.compactMap { doc in
                     let data = doc.data()
                     let id = doc.documentID

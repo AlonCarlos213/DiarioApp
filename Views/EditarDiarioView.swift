@@ -3,24 +3,32 @@ import FirebaseFirestore
 import FirebaseStorage
 
 struct EditarDiarioView: View {
+    
+    // MARK: - Dependencias del entorno y propiedades externas
+    
     @EnvironmentObject var appSettings: AppSettings
     @Environment(\.dismiss) var dismiss
-    var diario: Diario
-    var onGuardar: () -> Void
-
-    @State private var nuevoTitulo: String
-    @State private var contenidoAttr: NSAttributedString
-    @State private var selectedImage: UIImage? = nil
-    @State private var mostrandoPicker = false
-    @State private var mostrandoAlerta = false
-    @State private var mostrandoConfirmacion = false
-    @State private var eliminarImagenActual = false
-
+    var diario: Diario                      // Diario que se esta editando
+    var onGuardar: () -> Void               // Callback al guardar
+    
+    // MARK: - Estados
+    
+    @State private var nuevoTitulo: String                      // Nuevo titulo del diario
+    @State private var contenidoAttr: NSAttributedString        // Contenido con formato
+    @State private var selectedImage: UIImage? = nil            // Imagen seleccionada
+    @State private var mostrandoPicker = false                  // Mostrar picker de imagen
+    @State private var mostrandoAlerta = false                  // Mostrar alerta de error
+    @State private var mostrandoConfirmacion = false            // Mostrar confirmacion de guardado
+    @State private var eliminarImagenActual = false             // Bandera para eliminar imagen actual
+    
+    // MARK: - Inicialización
+    
     init(diario: Diario, onGuardar: @escaping () -> Void) {
         self.diario = diario
         self.onGuardar = onGuardar
         _nuevoTitulo = State(initialValue: diario.titulo)
-
+        
+        // Convertir el contenido HTML en NSAttributedString
         if let data = diario.contenido.data(using: .utf8),
            let attrStr = try? NSAttributedString(
                 data: data,
@@ -37,14 +45,18 @@ struct EditarDiarioView: View {
         NavigationStack {
             ZStack {
                 Color.white.ignoresSafeArea()
-
+                
+                // MARK: - Contenido principal
+                
                 ScrollView {
                     VStack(spacing: 20) {
+                        // Campo para editar el título
                         TextField("Título", text: $nuevoTitulo)
                             .padding()
                             .background(appSettings.colorTema.opacity(0.5))
                             .cornerRadius(10)
-
+                        
+                        // Botones para aplicar formato al texto
                         HStack(spacing: 12) {
                             ForEach(toolbarItems, id: \.0) { item in
                                 Button {
@@ -62,13 +74,15 @@ struct EditarDiarioView: View {
                         .padding(8)
                         .background(appSettings.colorTema.opacity(0.5))
                         .cornerRadius(12)
-
+                        
+                        // Area de contenido enriquecido
                         RichTextView(attributedText: $contenidoAttr)
                             .frame(minHeight: 250)
                             .padding(6)
                             .background(appSettings.colorTema.opacity(0.5))
                             .cornerRadius(12)
-
+                        
+                        // Mostrar imagen nueva o actual
                         if let image = selectedImage {
                             Image(uiImage: image)
                                 .resizable()
@@ -85,13 +99,15 @@ struct EditarDiarioView: View {
                                 ProgressView()
                             }
                             .frame(maxHeight: 250)
-
+                            
+                            // Boton para eliminar la imagen actual
                             Button("Eliminar imagen actual") {
                                 eliminarImagenActual = true
                             }
                             .foregroundColor(.red)
                         }
-
+                        
+                        // Boton para seleccionar una nueva imagen
                         Button {
                             mostrandoPicker = true
                         } label: {
@@ -104,7 +120,8 @@ struct EditarDiarioView: View {
                             .background(appSettings.colorTema)
                             .cornerRadius(8)
                         }
-
+                        
+                        // Buton para guardar los cambios
                         Button("Guardar cambios") {
                             actualizarDiario()
                         }
@@ -114,7 +131,8 @@ struct EditarDiarioView: View {
                         .foregroundColor(.white)
                         .cornerRadius(10)
                         .shadow(color: appSettings.colorTema.opacity(0.5), radius: 5, x: 0, y: 3)
-
+                        
+                        // Confirmacion de guardado
                         if mostrandoConfirmacion {
                             Text("✅ Diario actualizado con éxito")
                                 .foregroundColor(.green)
@@ -125,6 +143,9 @@ struct EditarDiarioView: View {
                     .padding()
                 }
             }
+            
+            // MARK: - Toolbar y navegación/
+            
             .navigationTitle("") // Deja vacío y colocamos el título como un ToolbarItem
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -156,7 +177,9 @@ struct EditarDiarioView: View {
         }
         .appStyle()
     }
-
+    
+    // MARK: - Botones del toolbar para dar formato
+    
     var toolbarItems: [(String, Notification.Name)] {
         [
             ("bold", .applyBold),
@@ -168,13 +191,16 @@ struct EditarDiarioView: View {
             ("minus.magnifyingglass", .applySmaller)
         ]
     }
-
+    
+    // MARK: - Actualizar el diario en Firestore
+    
     func actualizarDiario() {
         guard let id = diario.id else {
             mostrandoAlerta = true
             return
         }
-
+        
+        // Convertir el contenido enriquecido a HTML
         let mutableAttr = NSMutableAttributedString(attributedString: contenidoAttr)
         mutableAttr.addAttribute(
             .font,
@@ -198,7 +224,9 @@ struct EditarDiarioView: View {
             guardarFirestore(titulo: nuevoTitulo, contenido: htmlString, imagenURL: diario.imagenURL)
         }
     }
-
+    
+    // MARK: - Subir imagen a Firebase Storage
+    
     func subirImagen(_ image: UIImage, completion: @escaping (String?) -> Void) {
         guard let data = image.jpegData(compressionQuality: 0.8) else {
             completion(nil)
@@ -217,7 +245,9 @@ struct EditarDiarioView: View {
             }
         }
     }
-
+    
+    // MARK: - Guardar cambios en Firestore
+    
     func guardarFirestore(titulo: String, contenido: String, imagenURL: String?) {
         let db = Firestore.firestore()
         db.collection("usuarios")

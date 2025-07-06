@@ -37,6 +37,7 @@
 				AppSettings.swift,
 				AppStyleModifier.swift,
 				"Color+Extensions.swift",
+				HTMLTextView.swift,
 				ImagePicker.swift,
 				MarkdownView.swift,
 				RichTextView.swift,

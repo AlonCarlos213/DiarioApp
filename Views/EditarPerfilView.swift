@@ -5,29 +5,37 @@ import PhotosUI
 import FirebaseFirestore
 
 struct EditarPerfilView: View {
+    
+    // MARK: - Dependencias del entorno
+    
     @EnvironmentObject var authVM: AuthViewModel
     @EnvironmentObject var appSettings: AppSettings
     @Environment(\.dismiss) var dismiss
+    
+    // MARK: - Estados
+    
+    @State private var nombre = ""                                  // Nombre ingresado por el usuario
+    @State private var descripcion = ""                             // Descripcion ingresada por el usuario
+    @State private var imagenSeleccionada: UIImage?                 // Imagen de perfil seleccionada
+    @State private var itemSeleccionado: PhotosPickerItem? = nil    // Item seleccionado desde la galeria o camara
 
-    @State private var nombre = ""
-    @State private var descripcion = ""
-    @State private var imagenSeleccionada: UIImage?
-    @State private var itemSeleccionado: PhotosPickerItem? = nil
-
-    @State private var mostrarActionSheet = false
-    @State private var mostrarPhotosPicker = false
-    @State private var mostrarCameraPicker = false
+    @State private var mostrarActionSheet = false                   // Mostrar opciones de seleccion de imagen
+    @State private var mostrarPhotosPicker = false                  // Mostrar picker de fotos
+    @State private var mostrarCameraPicker = false                  // Mostrar picker de camara
 
     var body: some View {
         NavigationStack {
             ZStack {
                 Color.white.ignoresSafeArea()
-
+                
+                // MARK: - Formulario principal
+                
                 ScrollView {
                     VStack(spacing: 20) {
                         // Imagen de perfil
                         ZStack(alignment: .bottomTrailing) {
                             if let imagen = imagenSeleccionada {
+                                // Imagen seleccionada por el usuario
                                 Image(uiImage: imagen)
                                     .resizable()
                                     .scaledToFill()
@@ -35,6 +43,7 @@ struct EditarPerfilView: View {
                                     .clipShape(Circle())
                                     .shadow(radius: 5)
                             } else {
+                                // Imagen por efecto
                                 Circle()
                                     .fill(Color.white.opacity(0.3))
                                     .frame(width: 140, height: 140)
@@ -46,7 +55,7 @@ struct EditarPerfilView: View {
                                             .foregroundColor(.white)
                                     )
                             }
-
+                            // Boton para cambiar imagen
                             Button {
                                 mostrarActionSheet = true
                             } label: {
@@ -59,7 +68,7 @@ struct EditarPerfilView: View {
                         }
                         .frame(width: 140, height: 140)
 
-                        // Nombres
+                        // Campo de nombre
                         VStack(alignment: .leading, spacing: 4) {
                             Text("Nombres y Apellidos")
                                 .font(.subheadline)
@@ -69,7 +78,7 @@ struct EditarPerfilView: View {
                                 .cornerRadius(12)
                         }
 
-                        // Correo
+                        // Mostrar correo del usuario
                         VStack(alignment: .leading, spacing: 4) {
                             Text("Correo Electrónico")
                                 .font(.subheadline)
@@ -80,7 +89,7 @@ struct EditarPerfilView: View {
                                 .cornerRadius(12)
                         }
 
-                        // Descripción
+                        // Campo de descripcion
                         VStack(alignment: .leading, spacing: 4) {
                             Text("Descripción")
                                 .font(.subheadline)
@@ -91,7 +100,7 @@ struct EditarPerfilView: View {
                                 .cornerRadius(12)
                         }
 
-                        // Botón guardar
+                        // Botón para guardar
                         Button {
                             guardarPerfil()
                         } label: {
@@ -107,6 +116,9 @@ struct EditarPerfilView: View {
                     .padding()
                 }
             }
+            
+            // MARK: - Toolbar y navegacion
+            
             .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(true)
@@ -125,6 +137,9 @@ struct EditarPerfilView: View {
             }
             .toolbarBackground(appSettings.colorTema.opacity(1), for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
+            
+            // MARK: - Action sheet para seleccionar foto
+            
             .actionSheet(isPresented: $mostrarActionSheet) {
                 ActionSheet(
                     title: Text("Seleccionar foto"),
@@ -135,10 +150,16 @@ struct EditarPerfilView: View {
                     ]
                 )
             }
+            
+            // MARK: - Pickers
+            
             .photosPicker(isPresented: $mostrarPhotosPicker, selection: $itemSeleccionado, matching: .images, preferredItemEncoding: .automatic)
             .sheet(isPresented: $mostrarCameraPicker) {
                 ImagePicker(sourceType: .camera, selectedImage: $imagenSeleccionada)
             }
+            
+            // MARK: - Reaccionar al cambio de foto seleccionada
+            
             .onChange(of: itemSeleccionado) { nuevoItem in
                 if let item = nuevoItem {
                     item.loadTransferable(type: Data.self) { result in
@@ -155,6 +176,8 @@ struct EditarPerfilView: View {
                     }
                 }
             }
+            
+            // Cargar datos actuales del usuario al aparecer
             .onAppear {
                 if let user = authVM.user {
                     nombre = user.displayName ?? ""
@@ -163,7 +186,9 @@ struct EditarPerfilView: View {
             .appStyle()
         }
     }
-
+    
+    // MARK: - Guardar cambios en Firestore y Firebase Storage
+    
     func guardarPerfil() {
         guard let user = authVM.user else { return }
 
@@ -174,7 +199,8 @@ struct EditarPerfilView: View {
             "nombre": nombre,
             "descripcion": descripcion
         ]
-
+        
+        // Si hay nueva imagen, subir al Storage y actualizar Firestore
         if let imagen = imagenSeleccionada, let imageData = imagen.jpegData(compressionQuality: 0.8) {
             let storageRef = Storage.storage().reference().child("perfiles/\(user.uid).jpg")
             storageRef.putData(imageData, metadata: nil) { _, error in
@@ -191,6 +217,7 @@ struct EditarPerfilView: View {
                 }
             }
         } else {
+            // Solo actualizar Firestore
             userRef.setData(datos, merge: true)
         }
 
